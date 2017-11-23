@@ -1,0 +1,4 @@
+﻿  game.cpp
+game.obj : error LNK2019: unresolved external symbol _gluNewQuadric@0 referenced in function "public: void __thiscall Tmpl8::Game::Init(void)" (?Init@Game@Tmpl8@@QAEXXZ)
+game.obj : error LNK2019: unresolved external symbol _gluSphere@20 referenced in function "public: void __thiscall Tmpl8::Game::Init(void)" (?Init@Game@Tmpl8@@QAEXXZ)
+C:\Users\Pete\Documents\University\Advanced Graphics\tmpl2017\Tmpl2017-02_debug.exe : fatal error LNK1120: 2 unresolved externals
