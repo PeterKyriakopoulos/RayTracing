@@ -1,8 +1,14 @@
 #pragma once
+#include "template.h"
+
 class Camera
 {
 public:
-	Camera(int positionX, int positionY, int positionZ);
+	Camera(vec3 position, vec3 direction);
 	~Camera();
+
+	vec3 pos;
+	vec3 dir;
+	float FOV;
 };
 

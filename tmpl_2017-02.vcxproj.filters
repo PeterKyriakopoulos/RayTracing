@@ -12,6 +12,8 @@
       <Filter>template code</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Ray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
@@ -26,6 +28,8 @@
     </ClInclude>
     <ClInclude Include="precomp.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Ray.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">

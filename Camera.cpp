@@ -2,16 +2,14 @@
 #include "Camera.h"
 
 
-int posX, posY, posZ;
-
-Camera::Camera(int positionX, int positionY, int positionZ)
+Camera::Camera(vec3 position, vec3 direction)
 {
-	posX = positionX;
-	posY = positionY;
-	posZ = positionZ;
+	this->dir = direction;
+	this->pos = position;
 }
 
 
 Camera::~Camera()
 {
 }
+
