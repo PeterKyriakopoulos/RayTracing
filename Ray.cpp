@@ -2,11 +2,15 @@
 #include "Ray.h"
 
 
-Ray::Ray()
+Ray::Ray(vec3 direction, vec3 origin)
 {
+	this->dir = direction;
+	this->orig = origin;
 }
 
 
 Ray::~Ray()
 {
 }
+
+

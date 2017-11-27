@@ -1,4 +1,6 @@
 #pragma once
+#include "Sphere.h"
+#include <vector>
 
 namespace Tmpl8 {
 
@@ -8,6 +10,7 @@ public:
 	void SetTarget( Surface* surface ) { screen = surface; }
 	void Init();
 	void Shutdown();
+	vec3 Trace(vector<Sphere> spheres, int depth);
 	void Tick( float deltaTime );
 	void MouseUp( int button ) { /* implement if you want to detect mouse button presses */ }
 	void MouseDown( int button ) { /* implement if you want to detect mouse button presses */ }
