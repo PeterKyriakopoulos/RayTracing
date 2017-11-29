@@ -17,36 +17,6 @@ void Game::Shutdown()
 {
 }
 
-//Find intersection with sphere and return color
-vec3 Trace(Ray r, vector<Sphere> spheres, int depth)
-{
-	float tnear = std::numeric_limits<float>::infinity();
-	Sphere *sphere = NULL;
-	
-	for (int i = 0; i < spheres.size(); i++)
-	{
-		float t0 = std::numeric_limits<float>::infinity();
-		float t1 = std::numeric_limits<float>::infinity();
-
-		//If ray hits, store the closest hit sphere
-		if (spheres[i].intersect(r, &t0, &t1));
-		{
-			if (t0 < 0)
-				t0 = t1;
-			if (t0 < tnear)
-			{
-				tnear = t0;
-				sphere = spheres[i];
-			}
-		}
-
-		//If ray miss, return black color
-		if (!sphere)
-			return vec3(0);
-
-
-	}
-}
 
 static Sprite rotatingGun( new Surface( "assets/aagun.tga" ), 36 );
 static int frame = 0;
