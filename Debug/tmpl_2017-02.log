@@ -1,4 +1,8 @@
 ﻿  game.cpp
-game.obj : error LNK2019: unresolved external symbol _gluNewQuadric@0 referenced in function "public: void __thiscall Tmpl8::Game::Init(void)" (?Init@Game@Tmpl8@@QAEXXZ)
-game.obj : error LNK2019: unresolved external symbol _gluSphere@20 referenced in function "public: void __thiscall Tmpl8::Game::Init(void)" (?Init@Game@Tmpl8@@QAEXXZ)
-C:\Users\Pete\Documents\University\Advanced Graphics\tmpl2017\Tmpl2017-02_debug.exe : fatal error LNK1120: 2 unresolved externals
+game.cpp(15): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+game.cpp(16): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+game.cpp(17): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+game.cpp(18): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\pete\documents\github\raytracing\game.cpp(101): warning C4715: 'Tmpl8::Game::trace': not all control paths return a value
+  tmpl_2017-02.vcxproj -> C:\Users\Pete\Documents\GitHub\RayTracing\Tmpl2017-02_debug.exe
+  tmpl_2017-02.vcxproj -> C:\Users\Pete\Documents\GitHub\RayTracing\Tmpl2017-02_debug.pdb (Full PDB)

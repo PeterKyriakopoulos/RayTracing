@@ -1,7 +1,6 @@
 #include "precomp.h"
 #include "Sphere.h"
 #include "Ray.h"
-#include "Material.h"
 
 
 Sphere::Sphere(vec3 position, float radius, vec3 color, int type)
@@ -36,3 +35,4 @@ bool Sphere::intersect(Ray r, float &t0, float &t1)
 
 	return true;
 }
+

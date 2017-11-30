@@ -11,8 +11,7 @@ public:
 	~Sphere();
 	bool intersect(Ray r, float &t0, float &t1);
 
-	vec3 pos;
-	vec3 color;
+	vec3 pos, color;
 	float rad;
 	Material *mat;
 };
