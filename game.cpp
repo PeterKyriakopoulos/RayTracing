@@ -14,12 +14,12 @@ Camera *camera;
 void Game::Init()
 {
 	vec3 p1, p2;
-	p1 = (50, 50, 0);
-	p2 = (75, 50, 0);
-	spheres.push_back(Sphere(p1, 10, (0.0, 255.0, 0.0), 0));
-	spheres.push_back(Sphere(p2, 10, (255.0, 255.0, 255.0), 1));
+	p1 = (100, 100, 0);
+	p2 = (200, 200, 0);
+	spheres.push_back(Sphere(p1, 50, (0.0, 255.0, 0.0), 0));
+	spheres.push_back(Sphere(p2, 50, (255.0, 255.0, 255.0), 1));
 
-	camera = new Camera(vec3(0), vec3(0));
+	camera = new Camera(vec3(0), vec3(0), 30);
 }
 
 // -----------------------------------------------------------
@@ -110,7 +110,8 @@ void Game::render(vector<Sphere> &spheres, Camera *cam)
 	vec3 *pixel = new vec3[width*height];
 	float invWidth = 1 / float(width), invHeight = 1 / float(height);
 	float fov = 30, aspectratio = width / float(height);
-	float angle = tan(M_PI * 0.5 * fov / 180.);
+	//float angle = tan(M_PI * 0.5 * fov / 180.);
+	float angle = screen->GetPitch();
 	int depth = 0;
 	int k = 0;
 
@@ -146,7 +147,7 @@ static int frame = 0;
 // -----------------------------------------------------------
 // Main application tick function
 // -----------------------------------------------------------
-void Game::Tick( float deltaTime )
+void Game::Tick(float deltaTime)
 {
 	/* How to plot the color of a pixel
 	screen.Plot(x,y,c)
@@ -154,9 +155,8 @@ void Game::Tick( float deltaTime )
 	c = b+ (g<<8) + (r<<16)
 	*/
 
-
 	// clear the graphics window
-	screen->Clear( 0 );
+	screen->Clear(0);
 	// print something in the graphics window
 	//screen->Print( "pete is the man", 2, 2, 0xffffff );
 	// print something to the text window
@@ -164,10 +164,22 @@ void Game::Tick( float deltaTime )
 	// draw a sprite
 	//rotatingGun.SetFrame( frame );
 	//rotatingGun.Draw( screen, 100, 100 );
-	
-	render(spheres, camera);
-	
 
+	//render(spheres, camera);
+
+	for (int i = 0; i < spheres.size(); i++)
+	{
+		for (int y = 100; y < 200; ++y)
+			for (int x = 100; x < 200; ++x)
+			{
+				int r = (int) (spheres[i].color.x * 255.0);
+				int g = (int) (spheres[i].color.y * 255.0);
+				int b = (int) (spheres[i].color.z * 255.0);
+
+				Pixel c = b + (g << 8) + (r << 16);
+				screen->Plot(x, y, c);
+			}
+	}
 
 	if (++frame == 36) frame = 0;
 }
