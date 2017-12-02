@@ -2,6 +2,7 @@
 #include "Sphere.h"
 #include "Ray.h"
 #include "Material.h"
+#include "Camera.h"
 #include <vector>
 
 namespace Tmpl8 {
@@ -18,7 +19,8 @@ public:
 	void MouseMove( int x, int y ) { /* implement if you want to detect mouse movement */ }
 	void KeyUp( int key ) { /* implement if you want to handle keys */ }
 	void KeyDown( int key ) { /* implement if you want to handle keys */ }
-	vec3 trace(Ray r, vector<Sphere> sphere, int &depth);
+	vec3 trace(Ray r, vector<Sphere> &sphere, int &depth);
+	void render(vector<Sphere> &sphere, Camera *cam);
 private:
 	Surface* screen;
 };

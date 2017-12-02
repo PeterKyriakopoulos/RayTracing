@@ -2,10 +2,12 @@
 #include "Sphere.h"
 #include "Ray.h"
 #include "Material.h"
+#include "Camera.h"
 #include <vector>
 
 
-Sphere *sphere1, *sphere2;
+vector<Sphere> spheres;
+Camera *camera;
 // -----------------------------------------------------------
 // Initialize the application
 // -----------------------------------------------------------
@@ -14,10 +16,10 @@ void Game::Init()
 	vec3 p1, p2;
 	p1 = (50, 50, 0);
 	p2 = (75, 50, 0);
-	sphere1 = new Sphere(p1, 10, (0.0, 255.0, 0.0), 0);
-	sphere1 = new Sphere(p2, 10, (255.0, 255.0, 255.0), 1);
+	spheres.push_back(Sphere(p1, 10, (0.0, 255.0, 0.0), 0));
+	spheres.push_back(Sphere(p2, 10, (255.0, 255.0, 255.0), 1));
 
-
+	camera = new Camera(vec3(0), vec3(0));
 }
 
 // -----------------------------------------------------------
@@ -28,11 +30,12 @@ void Game::Shutdown()
 }
 
 //Find intersection with object and return color
-vec3 Game::trace(Ray r, vector<Sphere> spheres, int &depth)
+vec3 Game::trace(Ray r, vector<Sphere> &spheres, int &depth)
 {
 	//Nearest obj hit
 	float tnear = std::numeric_limits<float>::infinity();
-	Sphere *sphere = NULL;
+	//Sphere *sphere = NULL;
+	bool hit = FALSE;
 
 	//Loop over all spheres
 	for (uint i = 0; i < spheres.size(); i++)
@@ -48,25 +51,26 @@ vec3 Game::trace(Ray r, vector<Sphere> spheres, int &depth)
 			if (t0 < tnear)
 			{
 				tnear = t0;
-				*sphere = spheres[i];
+				//sphere = spheres[i];
+				hit = TRUE;
 			}
 		}
 
 		//If ray miss, return black color
-		if (!sphere)
+		if (!hit)
 			return vec3(0);
 
 		//The final pixel color
 		vec3 pixCol = 0;
 		//Point of collision and normal
 		vec3 posHit = r.orig + r.dir * tnear;
-		vec3 normHit = posHit - sphere->pos;
+		vec3 normHit = posHit - spheres[i].pos;
 
 		//Normalize the normal vector
 		normHit = normalize(normHit);
 
 		//If the material is reflective or transparent continue tracing
-		if (sphere->mat->reflect && depth < 3)
+		if (spheres[i].mat->reflect && depth < 3)
 		{
 			//Compute the new reflected direction in which we check
 			vec3 reflDir = r.dir - normHit * 2 * r.dir.dot(normHit);
@@ -77,7 +81,7 @@ vec3 Game::trace(Ray r, vector<Sphere> spheres, int &depth)
 
 			return reflect * pixCol;
 		}
-		else if (sphere->mat->transp && depth < 3)
+		else if (spheres[i].mat->transp && depth < 3)
 		{
 			//Material density and resulting angle
 			float dens = 1 / 1.3;
@@ -96,8 +100,44 @@ vec3 Game::trace(Ray r, vector<Sphere> spheres, int &depth)
 		}
 
 		//If material is diffuse return its color and stop tracing
-		return pixCol + sphere->color;
+		return pixCol + spheres[i].color;
 	}
+}
+
+void Game::render(vector<Sphere> &spheres, Camera *cam)
+{
+	unsigned width = screen->GetWidth(), height = screen->GetHeight();
+	vec3 *pixel = new vec3[width*height];
+	float invWidth = 1 / float(width), invHeight = 1 / float(height);
+	float fov = 30, aspectratio = width / float(height);
+	float angle = tan(M_PI * 0.5 * fov / 180.);
+	int depth = 0;
+	int k = 0;
+
+	for (int y = 0; y < height; y++)
+		for (int x = 0; x < width; x++)
+		{
+			float xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
+			float yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
+			Ray *r = new Ray((xx, yy, -1), vec3(0));
+			r->dir = normalize(r->dir);
+			pixel[k] = trace(*r, spheres, depth);
+		}
+
+	k = 0;
+
+	for (int y = 0; y < height; ++y)
+		for (int x = 0; x < width; ++x)
+		{
+			int r = (int)((pixel[k].x) * 255.0);
+			int g = (int)((pixel[k].y) * 255.0);
+			int b = (int)((pixel[k].z) * 255.0);
+
+			Pixel c = b + (g << 8) + (r << 16);
+
+			screen->Plot(x, y, c);
+			k++;
+		}
 }
 
 static Sprite rotatingGun( new Surface( "assets/aagun.tga" ), 36 );
@@ -118,12 +158,16 @@ void Game::Tick( float deltaTime )
 	// clear the graphics window
 	screen->Clear( 0 );
 	// print something in the graphics window
-	screen->Print( "pete is the man", 2, 2, 0xffffff );
+	//screen->Print( "pete is the man", 2, 2, 0xffffff );
 	// print something to the text window
-	printf( "this goes to the console window.\n" );
+	//printf( "this goes to the console window.\n" );
 	// draw a sprite
-	rotatingGun.SetFrame( frame );
-	rotatingGun.Draw( screen, 100, 100 );
+	//rotatingGun.SetFrame( frame );
+	//rotatingGun.Draw( screen, 100, 100 );
+	
+	render(spheres, camera);
+	
+
 
 	if (++frame == 36) frame = 0;
 }
