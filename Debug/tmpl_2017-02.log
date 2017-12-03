@@ -1,1 +1,14 @@
+<<<<<<< HEAD
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Platforms\Win32\PlatformToolsets\v141\Toolset.targets(34,5): error MSB8036: The Windows SDK version 10.0.16299.0 was not found. Install the required version of Windows SDK or change the SDK version in the project property pages or by right-clicking the solution and selecting "Retarget solution".
+=======
+﻿  game.cpp
+game.cpp(17): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+game.cpp(18): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+game.cpp(19): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+game.cpp(20): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+game.cpp(113): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+game.cpp(119): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+game.cpp(120): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\jedi husky\documents\github\raytracing\game.cpp(105): warning C4715: 'Tmpl8::Game::trace': not all control paths return a value
+  tmpl_2017-02.vcxproj -> C:\Users\Jedi Husky\Documents\GitHub\RayTracing\Tmpl2017-02_debug.exe
+>>>>>>> 6236c263f2b653f61ef72f2611b9264710cdfe43
