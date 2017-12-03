@@ -3,14 +3,8 @@ game.cpp(17): warning C4244: 'argument': conversion from 'int' to 'float', possi
 game.cpp(18): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 game.cpp(19): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 game.cpp(20): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-game.cpp(114): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-game.cpp(118): warning C4018: '<': signed/unsigned mismatch
-game.cpp(119): warning C4018: '<': signed/unsigned mismatch
-game.cpp(121): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-game.cpp(122): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-game.cpp(123): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-game.cpp(130): warning C4018: '<': signed/unsigned mismatch
-game.cpp(131): warning C4018: '<': signed/unsigned mismatch
-game.cpp(170): warning C4018: '<': signed/unsigned mismatch
+game.cpp(113): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+game.cpp(119): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+game.cpp(120): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\jedi husky\documents\github\raytracing\game.cpp(105): warning C4715: 'Tmpl8::Game::trace': not all control paths return a value
   tmpl_2017-02.vcxproj -> C:\Users\Jedi Husky\Documents\GitHub\RayTracing\Tmpl2017-02_debug.exe

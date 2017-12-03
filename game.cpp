@@ -16,8 +16,8 @@ void Game::Init()
 	vec3 p1, p2;
 	p1 = (100, 100, 0);
 	p2 = (200, 200, 0);
-	spheres.push_back(Sphere(p1, 50, (0.0, 255.0, 0.0), 0));
-	spheres.push_back(Sphere(p2, 50, (255.0, 255.0, 255.0), 1));
+	spheres.push_back(Sphere(p1, 50, (0.0, 1.0, 0.0), 0));
+	spheres.push_back(Sphere(p2, 50, (1.0, 1.0, 1.0), 1));
 
 	camera = new Camera(vec3(0), vec3(0), 30);
 }
@@ -107,37 +107,40 @@ vec3 Game::trace(Ray r, vector<Sphere> &spheres, int &depth)
 void Game::render(vector<Sphere> &spheres, Camera *cam)
 {
 	unsigned width = screen->GetWidth(), height = screen->GetHeight();
-	vec3 *pixel = new vec3[width*height];
+	vec3 pixel;
 	float invWidth = 1 / float(width), invHeight = 1 / float(height);
 	float fov = 30, aspectratio = width / float(height);
-	//float angle = tan(M_PI * 0.5 * fov / 180.);
-	float angle = screen->GetPitch();
-	int depth = 0;
-	int k = 0;
+	float angle = tan(M_PI * 0.5 * fov / 180.);
 
-	for (int y = 0; y < height; y++)
-		for (int x = 0; x < width; x++)
+	for (unsigned y = 0; y < height; y++)
+		for (unsigned x = 0; x < width; x++)
 		{
+			int depth = 0;
 			float xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
 			float yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
-			Ray *r = new Ray((xx, yy, -1), vec3(0));
-			r->dir = normalize(r->dir);
-			pixel[k] = trace(*r, spheres, depth);
-		}
+			Ray *r = new Ray(vec3(0), vec3(0));
+			r->orig = vec3(0);
+			r->dir.x = xx;
+			r->dir.y = yy;
+			r->dir.z = -1;
 
-	k = 0;
+			//r->dir.normalize();
+			float len = sqrt(xx*xx + yy*yy + 1);
+			if (len)
+			{
+				r->dir.x = xx / len;
+				r->dir.y = yy / len;
+				r->dir.z = -1 / len;
+			}
 
-	for (int y = 0; y < height; ++y)
-		for (int x = 0; x < width; ++x)
-		{
-			int r = (int)((pixel[k].x) * 255.0);
-			int g = (int)((pixel[k].y) * 255.0);
-			int b = (int)((pixel[k].z) * 255.0);
+			pixel = trace(*r, spheres, depth);
+		
+			int red = (int)((pixel.x) * 255.0);
+			int green = (int)((pixel.y) * 255.0);
+			int blue = (int)((pixel.z) * 255.0);
 
-			Pixel c = b + (g << 8) + (r << 16);
-
+			Pixel c = blue + (green << 8) + (red << 16);
 			screen->Plot(x, y, c);
-			k++;
 		}
 }
 
@@ -165,21 +168,14 @@ void Game::Tick(float deltaTime)
 	//rotatingGun.SetFrame( frame );
 	//rotatingGun.Draw( screen, 100, 100 );
 
-	//render(spheres, camera);
+	render(spheres, camera);
 
-	for (int i = 0; i < spheres.size(); i++)
-	{
-		for (int y = 100; y < 200; ++y)
-			for (int x = 100; x < 200; ++x)
-			{
-				int r = (int) (spheres[i].color.x * 255.0);
-				int g = (int) (spheres[i].color.y * 255.0);
-				int b = (int) (spheres[i].color.z * 255.0);
+	//for (unsigned y = 0; y < screen->GetHeight(); y++)
+	//	for (unsigned x = 0; x < screen->GetWidth(); x++)
+	//	{
 
-				Pixel c = b + (g << 8) + (r << 16);
-				screen->Plot(x, y, c);
-			}
-	}
+	//	}
+
 
 	if (++frame == 36) frame = 0;
 }
