@@ -13,13 +13,10 @@ Camera *camera;
 // -----------------------------------------------------------
 void Game::Init()
 {
-	vec3 p1, p2;
-	p1 = (100, 100, 0);
-	p2 = (200, 200, 0);
-	spheres.push_back(Sphere(p1, 50, (0.0, 1.0, 0.0), 0));
-	spheres.push_back(Sphere(p2, 50, (1.0, 1.0, 1.0), 1));
+	spheres.push_back(Sphere(vec3(1, -0.2, 0), 1, vec3(0.0, 1.0, 0.0), 0));
+	spheres.push_back(Sphere(vec3(200, 200, 0), 5, vec3(1.0, 1.0, 1.0), 1));
 
-	camera = new Camera(vec3(0), vec3(0), 30);
+	camera = new Camera(vec3(2, 2, 2), vec3(45), 30);
 }
 
 // -----------------------------------------------------------
@@ -67,7 +64,7 @@ vec3 Game::trace(Ray r, vector<Sphere> &spheres, int &depth)
 		vec3 normHit = posHit - spheres[i].pos;
 
 		//Normalize the normal vector
-		normHit = normalize(normHit);
+		normHit.normalize();
 
 		//If the material is reflective or transparent continue tracing
 		if (spheres[i].mat->reflect && depth < 3)
@@ -90,7 +87,7 @@ vec3 Game::trace(Ray r, vector<Sphere> &spheres, int &depth)
 
 			//Compute the new refracted direction in which we check
 			vec3 refrDir = r.dir*dens + normHit*(dens*cosAng - sqrt(snell));
-			refrDir = normalize(refrDir);
+			refrDir.normalize();
 			Ray *tempRay = new Ray(refrDir, posHit - normHit);
 			depth++;
 
@@ -106,11 +103,12 @@ vec3 Game::trace(Ray r, vector<Sphere> &spheres, int &depth)
 
 void Game::render(vector<Sphere> &spheres, Camera *cam)
 {
-	unsigned width = screen->GetWidth(), height = screen->GetHeight();
+	unsigned width = screen->GetWidth()/cam->pos.x, height = screen->GetHeight()/cam->pos.y;
 	vec3 pixel;
 	float invWidth = 1 / float(width), invHeight = 1 / float(height);
-	float fov = 30, aspectratio = width / float(height);
-	float angle = tan(M_PI * 0.5 * fov / 180.);
+	float fov = cam->fov;
+	float aspectratio = width / float(height);
+	float angle = tan(M_PI * 0.5 * fov / 180);
 
 	for (unsigned y = 0; y < height; y++)
 		for (unsigned x = 0; x < width; x++)
@@ -118,20 +116,8 @@ void Game::render(vector<Sphere> &spheres, Camera *cam)
 			int depth = 0;
 			float xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
 			float yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
-			Ray *r = new Ray(vec3(0), vec3(0));
-			r->orig = vec3(0);
-			r->dir.x = xx;
-			r->dir.y = yy;
-			r->dir.z = -1;
-
-			//r->dir.normalize();
-			float len = sqrt(xx*xx + yy*yy + 1);
-			if (len)
-			{
-				r->dir.x = xx / len;
-				r->dir.y = yy / len;
-				r->dir.z = -1 / len;
-			}
+			Ray *r = new Ray(vec3(xx, yy, -1), vec3(0));
+			r->dir.normalize();
 
 			pixel = trace(*r, spheres, depth);
 		
@@ -169,12 +155,6 @@ void Game::Tick(float deltaTime)
 	//rotatingGun.Draw( screen, 100, 100 );
 
 	render(spheres, camera);
-
-	//for (unsigned y = 0; y < screen->GetHeight(); y++)
-	//	for (unsigned x = 0; x < screen->GetWidth(); x++)
-	//	{
-
-	//	}
 
 
 	if (++frame == 36) frame = 0;
