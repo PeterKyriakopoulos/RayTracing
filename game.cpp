@@ -1,20 +1,32 @@
 #include "precomp.h" // include (only) this in every .cpp file
 #include "Sphere.h"
+#include "Plane.h"
 #include "Ray.h"
 #include "Material.h"
+//#include "Object.h"
 #include "Camera.h"
-#include <vector>
 
 
 vector<Sphere> spheres;
+vector<Plane> planes;
+//vector<Object> objects;
 Camera *camera;
 // -----------------------------------------------------------
 // Initialize the application
 // -----------------------------------------------------------
 void Game::Init()
 {
-	spheres.push_back(Sphere(vec3(1, -0.2, 0), 1, vec3(0.0, 1.0, 0.0), 0));
-	spheres.push_back(Sphere(vec3(200, 200, 0), 5, vec3(1.0, 1.0, 1.0), 1));
+	//Spheres
+	spheres.push_back(Sphere(vec3(4.0f, 3.0f, -30.0f), 1, vec3(0.0, 1.0, 0.0), 0, 0));
+	spheres.push_back(Sphere(vec3(-5.0f, 3.0f, -30.0f), 1, vec3(1.0, 1.0, 0.0), 0, 0));
+
+	//objects.push_back(Object(new Sphere(vec3(4.0f, 3.0f, -30.0f), 1, vec3(0.0, 1.0, 0.0), 0, 0)));
+
+	//Planes
+	planes.push_back(Plane(vec3(0.0f, 0.0f, -40.0f), vec3(0.0, 0.0, 1.0), vec3(0.5, 1.0, 1.0), 0));
+
+	//Lights
+	spheres.push_back(Sphere(vec3(0.0f, 10.0f, -10.0f), 3, 0, 0, vec3(1.0, 1.0, 1.0)));
 
 	camera = new Camera(vec3(2, 2, 2), vec3(45), 30);
 }
@@ -26,100 +38,185 @@ void Game::Shutdown()
 {
 }
 
+//bool Game::trace(Ray r, vector<Object> &objects, float &tnear, Object *&hitObject)
+//{
+//	tnear = std::numeric_limits<float>::infinity();
+//
+//	for (int i=0 ; i!= objects.size(); i++)
+//	{
+//		float t = std::numeric_limits<float>::infinity();
+//
+//		if (objects[i].intersect(r, t) && t < tnear)
+//		{
+//			hitObject = &objects[i];
+//			tnear = t;
+//		}
+//	}
+//
+//}
+//
+//vec3 Game::castRay(Ray r, vector<Object> &objects)
+//{
+//	vec3 pixCol = 0;
+//	Object *hitObj = NULL;
+//	float t;
+//
+//	if (trace(r, objects, t, hitObj))
+//	{
+//		vec3 posHit = r.orig + r.dir * t;
+//		vec3 normHit;
+//
+//		hitObj->getData(posHit, normHit);
+//
+//		pixCol = std::_Max_value(0.f, normHit.dot(-r.dir));
+//	}
+//
+//	return pixCol;
+//}
+
 //Find intersection with object and return color
-vec3 Game::trace(Ray r, vector<Sphere> &spheres, int &depth)
+vec3 Game::trace(Ray r, vector<Sphere> &spheres, vector<Plane> &planes, int &depth)
 {
 	//Nearest obj hit
-	float tnear = std::numeric_limits<float>::infinity();
-	//Sphere *sphere = NULL;
-	bool hit = FALSE;
+	float tnearSphere = std::numeric_limits<float>::infinity();
+	float tnearPlane = std::numeric_limits<float>::infinity();
+	Sphere *sphere = NULL;
+	sphere->Sphere::traceRay(r, spheres, sphere, tnearSphere);
+	Plane *plane = NULL;
+	plane->Plane::traceRay(r, planes, plane, tnearPlane);
+	//The final pixel color
+	vec3 pixCol = 0;
+	float bias = 1e-4;
 
-	//Loop over all spheres
-	for (uint i = 0; i < spheres.size(); i++)
+	//If ray miss, return bg color
+	if (sphere == NULL && plane == NULL)
+		return vec3(0.5f, 0.5f, 0.5f);
+
+	//If a sphere is closer
+	if (tnearSphere < tnearPlane)
 	{
-		float t0 = std::numeric_limits<float>::infinity();
-		float t1 = std::numeric_limits<float>::infinity();
+		//Point of collision and normal
+		vec3 posHit = r.orig + r.dir * tnearSphere;
+		vec3 normHit = posHit - sphere->pos;
 
-		//If ray hits, store the closest hit sphere
-		if (spheres[i].intersect(r, t0, t1))
+		//Normalize the normal vector
+		normHit.normalize();
+
+		bool inside = false;
+
+		if (r.dir.dot(normHit) > 0)
 		{
-			if (t0 < 0)
-				t0 = t1;
-			if (t0 < tnear)
-			{
-				tnear = t0;
-				//sphere = spheres[i];
-				hit = TRUE;
-			}
+			normHit = -normHit;
+			inside = true;
 		}
 
-		//If ray miss, return black color
-		if (!hit)
-			return vec3(0);
+		//If the material is reflective or transparent continue tracing
+		if (sphere->mat->reflect && depth < 3)
+		{
+			//Compute the new reflected direction in which we check
+			vec3 reflDir = r.dir - normHit * 2 * r.dir.dot(normHit);
+			reflDir.normalize();
+			Ray *tempRay = new Ray(reflDir, posHit + normHit * bias);
+			depth++;
 
-		//The final pixel color
-		vec3 pixCol = 0;
+			vec3 reflect = trace(*tempRay, spheres, planes, depth);
+
+			pixCol += reflect;
+		}
+		else if (sphere->mat->transp && depth < 3)
+		{
+			//Material density and resulting angle
+			float ior = 1.1;
+			float dens = (inside) ? ior : 1 / ior;
+			float cosAng = -normHit.dot(r.dir);
+			float snell = 1 - dens*dens * (1 - cosAng*cosAng);
+
+			//Compute the new refracted direction in which we check
+			vec3 refrDir = r.dir*dens + normHit*(dens*cosAng - sqrt(snell));
+			refrDir.normalize();
+			Ray *tempRay = new Ray(refrDir, posHit - normHit * bias);
+			depth++;
+
+			vec3 refract = trace(*tempRay, spheres, planes, depth);
+
+			pixCol += refract;
+		}
+		else
+			pixCol += sphere->getLighting(spheres, posHit, normHit, bias);
+		//If material is diffuse return its color and stop tracing
+		pixCol *= sphere->color;
+	}
+
+	//If a plane is closer
+	else if(tnearPlane < tnearSphere)
+	{
 		//Point of collision and normal
-		vec3 posHit = r.orig + r.dir * tnear;
-		vec3 normHit = posHit - spheres[i].pos;
+		vec3 posHit = r.orig + r.dir * tnearPlane;
+		vec3 normHit = posHit - plane->pos;
 
 		//Normalize the normal vector
 		normHit.normalize();
 
 		//If the material is reflective or transparent continue tracing
-		if (spheres[i].mat->reflect && depth < 3)
+		if (plane->mat->reflect && depth < 3)
 		{
 			//Compute the new reflected direction in which we check
 			vec3 reflDir = r.dir - normHit * 2 * r.dir.dot(normHit);
-			Ray *tempRay = new Ray(reflDir, posHit + normHit);
+			reflDir.normalize();
+			Ray *tempRay = new Ray(reflDir, posHit + normHit * bias);
 			depth++;
 
-			vec3 reflect = trace(*tempRay, spheres, depth);
+			vec3 reflect = trace(*tempRay, spheres, planes, depth);
 
-			return reflect * pixCol;
+			pixCol += reflect;
 		}
-		else if (spheres[i].mat->transp && depth < 3)
+		else if (plane->mat->transp && depth < 3)
 		{
 			//Material density and resulting angle
-			float dens = 1 / 1.3;
+			float ior = 1.1;
+			float dens = 1.0f / ior;
 			float cosAng = -normHit.dot(r.dir);
-			float snell = dens*dens * (1 - cosAng*cosAng);
+			float snell = 1 - dens*dens * (1 - cosAng*cosAng);
 
 			//Compute the new refracted direction in which we check
 			vec3 refrDir = r.dir*dens + normHit*(dens*cosAng - sqrt(snell));
 			refrDir.normalize();
-			Ray *tempRay = new Ray(refrDir, posHit - normHit);
+			Ray *tempRay = new Ray(refrDir, posHit - normHit * bias);
 			depth++;
 
-			vec3 refract = trace(*tempRay, spheres, depth);
+			vec3 refract = trace(*tempRay, spheres, planes, depth);
 
-			return refract * pixCol;
+			pixCol += refract;
 		}
-
+		else
+			pixCol += plane->getLighting(spheres, planes, posHit, normHit, bias);
 		//If material is diffuse return its color and stop tracing
-		return pixCol + spheres[i].color;
+		pixCol *= sphere->color;
 	}
+
+	return pixCol;
 }
 
-void Game::render(vector<Sphere> &spheres, Camera *cam)
+void Game::render(vector<Sphere> &spheres, vector<Plane> &planes, Camera *cam)
 {
-	unsigned width = screen->GetWidth()/cam->pos.x, height = screen->GetHeight()/cam->pos.y;
+	unsigned width = screen->GetWidth(), height = screen->GetHeight();
 	vec3 pixel;
 	float invWidth = 1 / float(width), invHeight = 1 / float(height);
 	float fov = cam->fov;
 	float aspectratio = width / float(height);
-	float angle = tan(M_PI * 0.5 * fov / 180);
+	float angle = tan(M_PI * 0.5f * fov / 180.0f);
 
 	for (unsigned y = 0; y < height; y++)
 		for (unsigned x = 0; x < width; x++)
 		{
 			int depth = 0;
-			float xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
-			float yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
+			float xx = (2 * ((x + 0.5f) * invWidth) - 1) * angle * aspectratio;
+			float yy = (1 - 2 * ((y + 0.5f) * invHeight)) * angle;
 			Ray *r = new Ray(vec3(xx, yy, -1), vec3(0));
 			r->dir.normalize();
 
-			pixel = trace(*r, spheres, depth);
+			pixel = trace(*r, spheres, planes, depth);
+			//pixel = castRay(*r, objects);
 		
 			int red = (int)((pixel.x) * 255.0);
 			int green = (int)((pixel.y) * 255.0);
@@ -154,8 +251,8 @@ void Game::Tick(float deltaTime)
 	//rotatingGun.SetFrame( frame );
 	//rotatingGun.Draw( screen, 100, 100 );
 
-	render(spheres, camera);
+	render(spheres, planes, camera);
 
 
-	if (++frame == 36) frame = 0;
+	//if (++frame == 36) frame = 0;
 }
