@@ -3,21 +3,18 @@
 #include "Ray.h"
 #include "Material.h"
 #include "Object.h"
+#include "Intersection.h"
+#include "SurfaceData.h"
 #include <vector>
 
 
-class Sphere
+class Sphere : public Object
 {
 public:
-	Sphere(vec3 position, float radius, vec3 color, int type, vec3 emColor);
-	~Sphere();
-	bool intersect(Ray &r, float &t);
-	void getData(vec3 &posHit, vec3 &normHit);
-	void traceRay(Ray r, vector<Sphere> &spheres, Sphere *&sphere, float &t);
-	vec3 getLighting(vector<Sphere>& spheres, vec3 posHit, vec3 normHit, float bias);
+	Sphere(const vec3 &position, const float radius, const vec3 &color, const int type);
+	const Intersection intersect(const Ray &r) const;
+	const SurfaceData getSurfaceData(const Intersection &intersection) const;
 
-	vec3 pos, color, emColor;
 	float rad;
-	Material *mat;
 };
 

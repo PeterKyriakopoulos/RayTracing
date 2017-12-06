@@ -3,104 +3,64 @@
 #include "Ray.h"
 
 
-Sphere::Sphere(vec3 position, float radius, vec3 color, int type, vec3 emColor)
-{
-	this->pos = position;
-	this->rad = radius;
-	this->color = color;
-	this->mat = new Material(type);
-	this->emColor = emColor;
-}
-
-
-Sphere::~Sphere()
+Sphere::Sphere(const vec3 &position, const float radius, const vec3 &color, const int type) : Object(position, type, color), rad(radius)
 {
 }
 
-bool Sphere::intersect(Ray &r, float &t)
+bool solveQuadratic(float a,  float b, float c, float &t0, float &t1)
 {
-	float t0, t1;
-
-	//If delta is less than 0 no intersection
-	vec3 l = this->pos - r.orig;
-	float delta = l.dot(r.dir);
-	if (delta < 0)
+	//Solve quadratic 
+	float discr = b * b - 4 * a * c;
+	if (discr < 0)
 		return false;
-
-	//If c > than rad^2 no intersection
-	float d2 = l.dot(l) - delta * delta;
-	if (d2 > this->rad*this->rad)
-		return false;
-
-	float thc = sqrt(this->rad*this->rad - d2);
-	t0 = delta - thc;
-	t1 = delta + thc;
-
-	if (t0 > t1) std::swap(t0, t1);
-
-	if (t0 < 0) 
+	else if (discr == 0)
+		t0 = t1 = -0.5f * b / a;
+	else
 	{
-		t0 = t1; 
-		if (t0 < 0) return false; 
+		float q = (b > 0) ? -0.5f * (b + sqrt(discr)) : -0.5f * (b - sqrt(discr));
+		t0 = q / a;
+		t1 = c / q;
 	}
-
-	t = t0;
-
+	if (t0 > t1)
+		swap(t0, t1);
+	
 	return true;
 }
 
-void Sphere::getData(vec3 & posHit, vec3 & normHit)
+const Intersection Sphere::intersect(const Ray & r) const
 {
-	normHit = posHit - this->pos;
-	normHit.normalize();
-}
+	Intersection intersect(&r, this, -1.0f);
 
-void Sphere::traceRay(Ray r, vector<Sphere>& spheres, Sphere *& sphere, float &t)
-{
-	for (uint i = 0; i < spheres.size(); i++)
+	vec3 L = r.orig - position;
+	float a = dot(r.dir, r.dir);
+	float b = 2 * dot(r.dir, L);
+	float c = dot(L, L) - (rad * rad);
+	float t0, t1;
+
+	if (!solveQuadratic(a,b,c,t0,t1))
+		return intersect;
+
+	if (t0 < 0)
 	{
-		float tnear = std::numeric_limits<float>::infinity();
-
-		if (spheres[i].intersect(r, tnear) && tnear < t)
-		{
-			sphere = &spheres[i];
-			t = tnear;
-		}
-	}
-}
-
-vec3 Sphere::getLighting(vector<Sphere> &spheres, vec3 posHit, vec3 normHit, float bias)
-{
-	vec3 pixCol = 0;
-
-	for (unsigned j = 0; j < spheres.size(); j++)
-	{
-		if (spheres[j].emColor.x > 0)
-		{
-			vec3 transm = 1;
-			vec3 lightDir = spheres[j].pos - posHit;
-			lightDir.normalize();
-
-			for (unsigned i = 0; i < spheres.size(); i++)
-			{
-				if (j != i)
-				{
-					float t0;
-					Ray *tempLight = new Ray(lightDir, posHit + normHit * bias);
-
-					if (spheres[i].intersect(*tempLight, t0))
-					{
-						transm = 0;
-						break;
-					}
-				}
-			}
-			pixCol += this->color * transm * std::_Max_value(float(0), normHit.dot(lightDir)) * spheres[j].emColor;
-		}
+		t0 = t1;
+		if (t0 < 0)
+			return intersect;
 	}
 
-	return pixCol;
+	intersect.rayT = t0;
+	return intersect;
 }
+
+const SurfaceData Sphere::getSurfaceData(const Intersection & intersection) const
+{
+	const vec3 &surfacePoint = intersection.getIntersectionPosition();
+	vec3 localCoord = surfacePoint - position;
+	vec3 normal = normalize(localCoord);
+
+	return{ normal, surfacePoint};
+}
+
+
 
 
 

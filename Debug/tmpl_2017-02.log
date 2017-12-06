@@ -1,4 +1,5 @@
-﻿  game.cpp
-game.cpp(207): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  tmpl_2017-02.vcxproj -> C:\Users\Pete\Documents\GitHub\RayTracing\Tmpl2017-02_debug.exe
-  tmpl_2017-02.vcxproj -> C:\Users\Pete\Documents\GitHub\RayTracing\Tmpl2017-02_debug.pdb (Full PDB)
+﻿  RayTrace.cpp
+  game.cpp
+game.cpp(216): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+  tmpl_2017-02.vcxproj -> C:\Users\Jedi Husky\Documents\GitHub\RayTracing\Tmpl2017-02_debug.exe

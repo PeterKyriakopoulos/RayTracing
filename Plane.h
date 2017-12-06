@@ -3,19 +3,17 @@
 #include "Material.h"
 #include "Ray.h"
 #include "Object.h"
+#include "Intersection.h"
+#include "SurfaceData.h"
 #include <vector>
 
-class Plane
+class Plane : public Object 
 {
 public:
-	Plane(vec3 position, vec3 normal, vec3 color, int type);
-	~Plane();
-	bool intersect(Ray &r, float &t);
-	void getData(vec3 &posHit, vec3 &normHit);
-	void traceRay(Ray r, vector<Plane> &planes, Plane *&plane, float &t);
-	vec3 getLighting(vector<Sphere> &spheres, vector<Plane>& planes, vec3 posHit, vec3 normHit, float bias);
+	Plane(const vec3 &position, const vec3 &normal, const vec3 &color, const int type);
+	const Intersection intersect(const Ray &r) const;
+	const SurfaceData getSurfaceData(const Intersection &intersection) const;
 
-	vec3 pos, color, norm;
-	Material *mat;
+	vec3 norm;
 };
 
