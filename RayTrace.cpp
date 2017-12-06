@@ -80,7 +80,10 @@ vec3 RayTrace::trace(Ray r, vector<Sphere> &spheres, vector<Plane> &planes, vect
 			pixCol += refract;
 		}
 		else
+		{
+
 			pixCol += sphere->getLighting(lights, spheres, posHit, normHit, bias);
+		}
 		//If material is diffuse return its color and stop tracing
 		pixCol *= sphere->color;
 	}

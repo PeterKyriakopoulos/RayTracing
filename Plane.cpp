@@ -70,12 +70,13 @@ vec3 Plane::getLighting(vector<PointLight> &lights, vector<Plane>& planes, vec3 
 
 			if (planes[i].intersect(*lightRay, t))
 			{
+
 				transm = vec3(0);
 				break;
 			}
 		}
 
-		pixCol += this->color * lights[j].color * std::_Max_value(float(0), normHit.dot(-lightDir));
+		pixCol += this->color * lights[j].color * std::_Max_value(float(0), normHit.dot(-lightDir));	
 	}
 
 	return pixCol;

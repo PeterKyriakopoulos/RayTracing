@@ -6,7 +6,7 @@
 #include "Camera.h"
 #include "RayTrace.h"
 #include <sstream>
-
+#include <conio.h>
 
 vector<Sphere> spheres;
 vector<Plane> planes;
@@ -19,9 +19,11 @@ RayTrace rendering;
 void Game::Init()
 {
 	//Spheres
-	spheres.push_back(Sphere(vec3(4.0f, 3.0f, -30.0f), 1, vec3(0.0, 1.0, 0.0), 0, 0));
+	spheres.push_back(Sphere(vec3(4.0f, 3.0f, -20.0f), 1, vec3(0.0, 1.0, 0.0), 0, 0));
 	spheres.push_back(Sphere(vec3(-5.0f, 3.0f, -20.0f), 1, vec3(1.0, 1.0, 1.0), 2, 0));
 	spheres.push_back(Sphere(vec3(4.0f, -2.0f, -20.0f), 1, vec3(1.0, 1.0, 1.0), 1, 0));
+	spheres.push_back(Sphere(vec3(-3.0f, -2.0f, -25.0f), 3, vec3(1.0, 1.0, 1.0), 1, 0));
+	spheres.push_back(Sphere(vec3(4.0f, 3.0f, -15.0f), 1, vec3(1.0, 1.0, 1.0), 2, 0));
 	
 
 	//Planes
@@ -46,6 +48,15 @@ void Game::Shutdown()
 {
 }
 
+void Game::KeyDown(int key)
+{
+	switch (key)
+	{
+		case 'w':
+			//glTranslatef();
+			break;
+	}
+}
 
 // -----------------------------------------------------------
 // Main application tick function
@@ -56,4 +67,9 @@ void Game::Tick(float deltaTime)
 	screen->Clear(0);
 
 	rendering.render(spheres, planes, lights, camera, screen);
+
+	//char key = getch();
+	//int asciiVal = key;
+
+	//KeyDown(asciiVal);
 }
