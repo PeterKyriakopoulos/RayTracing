@@ -21,8 +21,7 @@ public:
 	void MouseMove( int x, int y ) { /* implement if you want to detect mouse movement */ }
 	void KeyUp( int key ) { /* implement if you want to handle keys */ }
 	void KeyDown( int key ) { /* implement if you want to handle keys */ }
-	vec3 trace(Ray r, vector<Sphere> &sphere, vector<Plane> &planes, int &depth);
-	void render(vector<Sphere> &sphere, vector<Plane> &planes, Camera *cam);
+
 private:
 	Surface* screen;
 };

@@ -18,6 +18,7 @@
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PointLight.cpp" />
+    <ClCompile Include="RayTrace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PointLight.h" />
+    <ClInclude Include="RayTrace.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">
