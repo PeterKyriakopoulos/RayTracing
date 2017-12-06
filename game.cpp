@@ -3,13 +3,13 @@
 #include "Plane.h"
 #include "Ray.h"
 #include "Material.h"
-//#include "Object.h"
+#include "PointLight.h"
 #include "Camera.h"
 
 
 vector<Sphere> spheres;
 vector<Plane> planes;
-//vector<Object> objects;
+vector<PointLight> lights;
 Camera *camera;
 // -----------------------------------------------------------
 // Initialize the application
@@ -18,17 +18,23 @@ void Game::Init()
 {
 	//Spheres
 	spheres.push_back(Sphere(vec3(4.0f, 3.0f, -30.0f), 1, vec3(0.0, 1.0, 0.0), 0, 0));
-	spheres.push_back(Sphere(vec3(-5.0f, 3.0f, -30.0f), 1, vec3(1.0, 1.0, 0.0), 0, 0));
-
-	//objects.push_back(Object(new Sphere(vec3(4.0f, 3.0f, -30.0f), 1, vec3(0.0, 1.0, 0.0), 0, 0)));
+	spheres.push_back(Sphere(vec3(-5.0f, 3.0f, -20.0f), 1, vec3(1.0, 1.0, 1.0), 2, 0));
+	spheres.push_back(Sphere(vec3(4.0f, -2.0f, -20.0f), 1, vec3(1.0, 1.0, 1.0), 1, 0));
+	
 
 	//Planes
-	planes.push_back(Plane(vec3(0.0f, 0.0f, -40.0f), vec3(0.0, 0.0, 1.0), vec3(0.5, 1.0, 1.0), 0));
+	planes.push_back(Plane(vec3(0.0f, -10.0f, -30.0f), vec3(0.0f, 0.0f, -1.0f), vec3(1.0, 0.8, 0.0), 0));
+	planes.push_back(Plane(vec3(-6.0f, 0.0f, -40.0f), vec3(-1.0f, 0.0f, 0.0f), vec3(0.5, 0.0, 1.0), 0));
+	planes.push_back(Plane(vec3(0.0f, -6.0f, -40.0f), vec3(0.0f, -1.0f, 0.0f), vec3(1.0, 1.0, 1.0), 0));
+	planes.push_back(Plane(vec3(6.0f, 0.0f, -40.0f), vec3(1.0f, 0.0f, 0.0f), vec3(0.5, 0.0, 1.0), 0));
+	planes.push_back(Plane(vec3(0.0f, 6.0f, -40.0f), vec3(0.0f, 1.0f, 0.0f), vec3(1.0, 1.0, 1.0), 0));
+	planes.push_back(Plane(vec3(0.0f, -8.0f, -15.0f), vec3(0.0f, 0.0f, 1.0f), vec3(1.0, 0.8, 0.0), 0));
+
 
 	//Lights
-	spheres.push_back(Sphere(vec3(0.0f, 10.0f, -10.0f), 3, 0, 0, vec3(1.0, 1.0, 1.0)));
+	lights.push_back(PointLight(vec3(0.0f, 10.0f, -10.0f), 650.0f, vec3(1.0f, 1.0f, 1.0f)));
 
-	camera = new Camera(vec3(2, 2, 2), vec3(45), 30);
+	camera = new Camera(vec3(0, 0, 0), vec3(45), 30);
 }
 
 // -----------------------------------------------------------
@@ -37,42 +43,6 @@ void Game::Init()
 void Game::Shutdown()
 {
 }
-
-//bool Game::trace(Ray r, vector<Object> &objects, float &tnear, Object *&hitObject)
-//{
-//	tnear = std::numeric_limits<float>::infinity();
-//
-//	for (int i=0 ; i!= objects.size(); i++)
-//	{
-//		float t = std::numeric_limits<float>::infinity();
-//
-//		if (objects[i].intersect(r, t) && t < tnear)
-//		{
-//			hitObject = &objects[i];
-//			tnear = t;
-//		}
-//	}
-//
-//}
-//
-//vec3 Game::castRay(Ray r, vector<Object> &objects)
-//{
-//	vec3 pixCol = 0;
-//	Object *hitObj = NULL;
-//	float t;
-//
-//	if (trace(r, objects, t, hitObj))
-//	{
-//		vec3 posHit = r.orig + r.dir * t;
-//		vec3 normHit;
-//
-//		hitObj->getData(posHit, normHit);
-//
-//		pixCol = std::_Max_value(0.f, normHit.dot(-r.dir));
-//	}
-//
-//	return pixCol;
-//}
 
 //Find intersection with object and return color
 vec3 Game::trace(Ray r, vector<Sphere> &spheres, vector<Plane> &planes, int &depth)
@@ -126,7 +96,7 @@ vec3 Game::trace(Ray r, vector<Sphere> &spheres, vector<Plane> &planes, int &dep
 		else if (sphere->mat->transp && depth < 3)
 		{
 			//Material density and resulting angle
-			float ior = 1.1;
+			float ior = 1.3;
 			float dens = (inside) ? ior : 1 / ior;
 			float cosAng = -normHit.dot(r.dir);
 			float snell = 1 - dens*dens * (1 - cosAng*cosAng);
@@ -142,7 +112,7 @@ vec3 Game::trace(Ray r, vector<Sphere> &spheres, vector<Plane> &planes, int &dep
 			pixCol += refract;
 		}
 		else
-			pixCol += sphere->getLighting(spheres, posHit, normHit, bias);
+			pixCol += sphere->getLighting(lights, spheres, posHit, normHit, bias);
 		//If material is diffuse return its color and stop tracing
 		pixCol *= sphere->color;
 	}
@@ -173,7 +143,7 @@ vec3 Game::trace(Ray r, vector<Sphere> &spheres, vector<Plane> &planes, int &dep
 		else if (plane->mat->transp && depth < 3)
 		{
 			//Material density and resulting angle
-			float ior = 1.1;
+			float ior = 1.3;
 			float dens = 1.0f / ior;
 			float cosAng = -normHit.dot(r.dir);
 			float snell = 1 - dens*dens * (1 - cosAng*cosAng);
@@ -189,9 +159,9 @@ vec3 Game::trace(Ray r, vector<Sphere> &spheres, vector<Plane> &planes, int &dep
 			pixCol += refract;
 		}
 		else
-			pixCol += plane->getLighting(spheres, planes, posHit, normHit, bias);
+			pixCol += plane->getLighting(lights, planes, posHit, normHit, bias);
 		//If material is diffuse return its color and stop tracing
-		pixCol *= sphere->color;
+		pixCol *= plane->color;
 	}
 
 	return pixCol;
@@ -216,7 +186,6 @@ void Game::render(vector<Sphere> &spheres, vector<Plane> &planes, Camera *cam)
 			r->dir.normalize();
 
 			pixel = trace(*r, spheres, planes, depth);
-			//pixel = castRay(*r, objects);
 		
 			int red = (int)((pixel.x) * 255.0);
 			int green = (int)((pixel.y) * 255.0);
@@ -227,32 +196,27 @@ void Game::render(vector<Sphere> &spheres, vector<Plane> &planes, Camera *cam)
 		}
 }
 
-static Sprite rotatingGun( new Surface( "assets/aagun.tga" ), 36 );
-static int frame = 0;
+void KeyDown(int key)
+{
+	switch (key)
+	{
+		case 'w' :
+			camera->fov++;
+			break;
+		case 's':
+			camera->fov--;
+			break;
+	}
+}
 
 // -----------------------------------------------------------
 // Main application tick function
 // -----------------------------------------------------------
 void Game::Tick(float deltaTime)
 {
-	/* How to plot the color of a pixel
-	screen.Plot(x,y,c)
-	r = (int) ((cc.x) * 255.0))
-	c = b+ (g<<8) + (r<<16)
-	*/
-
 	// clear the graphics window
 	screen->Clear(0);
-	// print something in the graphics window
-	//screen->Print( "pete is the man", 2, 2, 0xffffff );
-	// print something to the text window
-	//printf( "this goes to the console window.\n" );
-	// draw a sprite
-	//rotatingGun.SetFrame( frame );
-	//rotatingGun.Draw( screen, 100, 100 );
 
 	render(spheres, planes, camera);
 
-
-	//if (++frame == 36) frame = 0;
 }

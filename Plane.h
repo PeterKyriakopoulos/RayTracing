@@ -3,6 +3,7 @@
 #include "Material.h"
 #include "Ray.h"
 #include "Object.h"
+#include "PointLight.h"
 #include <vector>
 
 class Plane
@@ -13,7 +14,7 @@ public:
 	bool intersect(Ray &r, float &t);
 	void getData(vec3 &posHit, vec3 &normHit);
 	void traceRay(Ray r, vector<Plane> &planes, Plane *&plane, float &t);
-	vec3 getLighting(vector<Sphere> &spheres, vector<Plane>& planes, vec3 posHit, vec3 normHit, float bias);
+	vec3 getLighting(vector<PointLight> &lights, vector<Plane>& planes, vec3 posHit, vec3 normHit, float bias);
 
 	vec3 pos, color, norm;
 	Material *mat;

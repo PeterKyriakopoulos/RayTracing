@@ -22,8 +22,6 @@ public:
 	void KeyUp( int key ) { /* implement if you want to handle keys */ }
 	void KeyDown( int key ) { /* implement if you want to handle keys */ }
 	vec3 trace(Ray r, vector<Sphere> &sphere, vector<Plane> &planes, int &depth);
-	//bool trace(Ray r, vector<Object> &objects, float &tnear, Object *&hitObject);
-	//vec3 castRay(Ray r, vector<Object> &objects);
 	void render(vector<Sphere> &sphere, vector<Plane> &planes, Camera *cam);
 private:
 	Surface* screen;

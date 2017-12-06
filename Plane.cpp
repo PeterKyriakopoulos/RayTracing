@@ -52,34 +52,30 @@ void Plane::traceRay(Ray r, vector<Plane>& planes, Plane *& plane, float & t)
 	}
 }
 
-vec3 Plane::getLighting(vector<Sphere> &spheres, vector<Plane>& planes, vec3 posHit, vec3 normHit, float bias)
+vec3 Plane::getLighting(vector<PointLight> &lights, vector<Plane>& planes, vec3 posHit, vec3 normHit, float bias)
 {
 	vec3 pixCol = 0;
 
-	for (unsigned j = 0; j < spheres.size(); j++)
+	for (unsigned j = 0; j < lights.size(); j++)
 	{
-		if (spheres[j].emColor.x > 0)
+		vec3 lightDir = posHit - lights[j].position;
+		lightDir.normalize();
+		vec3 lightOrig = posHit + normHit * bias;
+		Ray *lightRay = new Ray(lightDir, lightOrig);
+		vec3 transm = vec3(1);
+
+		for (unsigned i = 0; i < planes.size(); i++)
 		{
-			vec3 transm = 1;
-			vec3 lightDir = spheres[j].pos - posHit;
-			lightDir.normalize();
+			float t;
 
-			for (unsigned i = 0; i < planes.size(); i++)
+			if (planes[i].intersect(*lightRay, t))
 			{
-				if (j != i)
-				{
-					float t0;
-					Ray *tempLight = new Ray(lightDir, posHit + normHit * bias);
-
-					if (planes[i].intersect(*tempLight, t0))
-					{
-						transm = 0;
-						break;
-					}
-				}
+				transm = vec3(0);
+				break;
 			}
-			pixCol += this->color * transm * std::_Max_value(float(0), normHit.dot(lightDir)) * spheres[j].emColor;
 		}
+
+		pixCol += this->color * lights[j].color * std::_Max_value(float(0), normHit.dot(-lightDir));
 	}
 
 	return pixCol;
