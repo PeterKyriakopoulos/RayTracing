@@ -1,11 +1,11 @@
 #include "precomp.h" // include (only) this in every .cpp file
 #include "Sphere.h"
 #include "Plane.h"
-#include "Ray.h"
 #include "Material.h"
 #include "PointLight.h"
 #include "Camera.h"
 #include "RayTrace.h"
+#include <sstream>
 
 
 vector<Sphere> spheres;
