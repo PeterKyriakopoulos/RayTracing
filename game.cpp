@@ -6,7 +6,7 @@
 #include "Camera.h"
 #include "RayTrace.h"
 #include <sstream>
-#include <conio.h>
+//#include <conio.h>
 
 vector<Sphere> spheres;
 vector<Plane> planes;

@@ -19,6 +19,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="RayTrace.cpp" />
+    <ClCompile Include="BoundBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
@@ -40,6 +41,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RayTrace.h" />
+    <ClInclude Include="BoundBox.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">

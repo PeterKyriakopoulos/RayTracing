@@ -1,2 +1,15 @@
-﻿  game.cpp
-  tmpl_2017-02.vcxproj -> C:\Users\Jedi Husky\Documents\GitHub\RayTracing\Tmpl2017-02_debug.exe
+﻿  Camera.cpp
+  game.cpp
+  Material.cpp
+  Object.cpp
+  Plane.cpp
+  PointLight.cpp
+  Ray.cpp
+  RayTrace.cpp
+RayTrace.cpp(148): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Sphere.cpp
+  surface.cpp
+  template.cpp
+  threads.cpp
+  Generating Code...
+  tmpl_2017-02.vcxproj -> C:\Users\Pete\Documents\GitHub\RayTracing\Tmpl2017-02_debug.exe
