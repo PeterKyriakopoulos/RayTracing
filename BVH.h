@@ -7,12 +7,12 @@
 struct BVHFlatNode 
 {
 	BoundBox boundBox;
-	uint32_t start, nPrims, rightOffset;
+	uint32_t start, numPrims, rightOff;
 };
 
 class BVH
 {
-	uint32_t nNodes, nLeafs, leafSize;
+	uint32_t numNodes, numLeafs, leafSize;
 	std::vector<Object*>* build_prims;
 
 

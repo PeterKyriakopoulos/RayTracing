@@ -13,7 +13,7 @@ struct BVHTraversal {
 bool BVH::getIntersection(const Ray& ray, IntersectionInfo* intersection, bool occlusion) const {
 	intersection->t = 999999999.f;
 	intersection->object = NULL;
-	float bbhits[4];
+	float bboxHits[4];
 	int32_t closer, other;
 
 	BVHTraversal todo[64];
@@ -31,8 +31,8 @@ bool BVH::getIntersection(const Ray& ray, IntersectionInfo* intersection, bool o
 		if (nears > intersection->t)
 			continue;
 
-		if (node.rightOffset == 0) {
-			for (uint32_t o = 0; o<node.nPrims; ++o) {
+		if (node.rightOff == 0) {
+			for (uint32_t o = 0; o<node.numPrims; ++o) {
 				IntersectionInfo current;
 
 				const Object* obj = (*build_prims)[node.start + o];
@@ -52,31 +52,31 @@ bool BVH::getIntersection(const Ray& ray, IntersectionInfo* intersection, bool o
 		}
 		else { 
 
-			bool hitc0 = flatTree[ni + 1].boundBox.intersect(ray, bbhits, bbhits + 1);
-			bool hitc1 = flatTree[ni + node.rightOffset].boundBox.intersect(ray, bbhits + 2, bbhits + 3);
+			bool hitc0 = flatTree[ni + 1].boundBox.intersect(ray, bboxHits, bboxHits + 1);
+			bool hitc1 = flatTree[ni + node.rightOff].boundBox.intersect(ray, bboxHits + 2, bboxHits + 3);
 
 			if (hitc0 && hitc1) {
 
 				closer = ni + 1;
-				other = ni + node.rightOffset;
+				other = ni + node.rightOff;
 
-				if (bbhits[2] < bbhits[0]) {
-					std::swap(bbhits[0], bbhits[2]);
-					std::swap(bbhits[1], bbhits[3]);
+				if (bboxHits[2] < bboxHits[0]) {
+					std::swap(bboxHits[0], bboxHits[2]);
+					std::swap(bboxHits[1], bboxHits[3]);
 					std::swap(closer, other);
 				}
 
-				todo[++stackptr] = BVHTraversal(other, bbhits[2]);
+				todo[++stackptr] = BVHTraversal(other, bboxHits[2]);
 
-				todo[++stackptr] = BVHTraversal(closer, bbhits[0]);
+				todo[++stackptr] = BVHTraversal(closer, bboxHits[0]);
 			}
 
 			else if (hitc0) {
-				todo[++stackptr] = BVHTraversal(ni + 1, bbhits[0]);
+				todo[++stackptr] = BVHTraversal(ni + 1, bboxHits[0]);
 			}
 
 			else if (hitc1) {
-				todo[++stackptr] = BVHTraversal(ni + node.rightOffset, bbhits[2]);
+				todo[++stackptr] = BVHTraversal(ni + node.rightOff, bboxHits[2]);
 			}
 
 		}
@@ -93,7 +93,7 @@ BVH::~BVH() {
 }
 
 BVH::BVH(std::vector<Object*>* objects, uint32_t leafSize)
-	: nNodes(0), nLeafs(0), leafSize(leafSize), build_prims(objects), flatTree(NULL) {
+	: numNodes(0), numLeafs(0), leafSize(leafSize), build_prims(objects), flatTree(NULL) {
 	Stopwatch sw;
 
 	build();
@@ -129,10 +129,10 @@ void BVH::build()
 		uint32_t end = bnode.end;
 		uint32_t nPrims = end - start;
 
-		nNodes++;
+		numNodes++;
 		node.start = start;
-		node.nPrims = nPrims;
-		node.rightOffset = Untouched;
+		node.numPrims = nPrims;
+		node.rightOff = Untouched;
 
 		BoundBox bb((*build_prims)[start]->getBoundBox());
 		BoundBox bc((*build_prims)[start]->getCentroid());
@@ -143,22 +143,22 @@ void BVH::build()
 		node.boundBox = bb;
 
 		if (nPrims <= leafSize) {
-			node.rightOffset = 0;
-			nLeafs++;
+			node.rightOff = 0;
+			numLeafs++;
 		}
 
 		buildnodes.push_back(node);
 
 		if (bnode.parent != 0xfffffffc) {
-			buildnodes[bnode.parent].rightOffset--;
+			buildnodes[bnode.parent].rightOff--;
 
 			
-			if (buildnodes[bnode.parent].rightOffset == TouchedTwice) {
-				buildnodes[bnode.parent].rightOffset = nNodes - 1 - bnode.parent;
+			if (buildnodes[bnode.parent].rightOff == TouchedTwice) {
+				buildnodes[bnode.parent].rightOff = numNodes - 1 - bnode.parent;
 			}
 		}
 
-		if (node.rightOffset == 0)
+		if (node.rightOff == 0)
 			continue;
 
 		uint32_t split_dim = bc.maxDim();
@@ -179,16 +179,16 @@ void BVH::build()
 
 		todo[stackptr].start = mid;
 		todo[stackptr].end = end;
-		todo[stackptr].parent = nNodes - 1;
+		todo[stackptr].parent = numNodes - 1;
 		stackptr++;
 
 		todo[stackptr].start = start;
 		todo[stackptr].end = mid;
-		todo[stackptr].parent = nNodes - 1;
+		todo[stackptr].parent = numNodes - 1;
 		stackptr++;
 	}
 
-	flatTree = new BVHFlatNode[nNodes];
-	for (uint32_t n = 0; n<nNodes; ++n)
+	flatTree = new BVHFlatNode[numNodes];
+	for (uint32_t n = 0; n<numNodes; ++n)
 		flatTree[n] = buildnodes[n];
 }
