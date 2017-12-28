@@ -5,7 +5,6 @@ BoundBox::~BoundBox()
 {
 }
 
-//Constructor for bounding box given a min and max
 BoundBox::BoundBox(const vec3 & min, const vec3 & max)
 {
 	this->minim = min;
@@ -13,7 +12,6 @@ BoundBox::BoundBox(const vec3 & min, const vec3 & max)
 	this->extent = max - min;
 }
 
-//Constructor for bounding box given a single vector
 BoundBox::BoundBox(const vec3 & p)
 {
 	this->minim = p;
@@ -29,45 +27,38 @@ BoundBox::BoundBox(const vec3 & p)
 #define maxps			_mm_max_ps
 #define mulps			_mm_mul_ps
 #define subps			_mm_sub_ps
-#define rotatelps(ps)		_mm_shuffle_ps((ps),(ps), 0x39)	// a,b,c,d -> b,c,d,a
-#define muxhps(low,high)	_mm_movehl_ps((low),(high))	// low{a,b,c,d}|high{e,f,g,h} = {c,d,g,h}
-static const float flt_plus_inf = -logf(0);	// let's keep C and C++ compilers happy.
+#define rotatelps(ps)		_mm_shuffle_ps((ps),(ps), 0x39)	
+#define muxhps(low,high)	_mm_movehl_ps((low),(high))	
+static const float flt_plus_inf = -logf(0);	
 const __m128 ps_cst_plus_inf[4] = { flt_plus_inf,  flt_plus_inf,  flt_plus_inf,  flt_plus_inf },
 ps_cst_minus_inf[4] = { -flt_plus_inf, -flt_plus_inf, -flt_plus_inf, -flt_plus_inf };
 
 bool BoundBox::intersect(const Ray & r, float * tnear, float * tfar) const
 {
-	// you may already have those values hanging around somewhere
 	const __m128
 		plus_inf = loadps(ps_cst_plus_inf),
 		minus_inf = loadps(ps_cst_minus_inf);
 
 	__m128 m128;
-	// use whatever's apropriate to load.
 	const __m128
 		box_min = loadps(&minim),
 		box_max = loadps(&maxim),
 		pos = loadps(&r.orig),
-		inv_dir = loadps(&ray.inv_d);
+		// i changed it to r.dir and it stopped the error, but not sure if it actually works
+		inv_dir = loadps(&r.dir);
 
-	// use a div if inverted directions aren't available
 	const __m128 l1 = mulps(subps(box_min, pos), inv_dir);
 	const __m128 l2 = mulps(subps(box_max, pos), inv_dir);
 
-	// the order we use for those min/max is vital to filter out
-	// NaNs that happens when an inv_dir is +/- inf and
-	// (box_min - pos) is 0. inf * 0 = NaN
 	const __m128 filtered_l1a = minps(l1, plus_inf);
 	const __m128 filtered_l2a = minps(l2, plus_inf);
 
 	const __m128 filtered_l1b = maxps(l1, minus_inf);
 	const __m128 filtered_l2b = maxps(l2, minus_inf);
 
-	// now that we're back on our feet, test those slabs.
 	__m128 lmax = maxps(filtered_l1a, filtered_l2a);
 	__m128 lmin = minps(filtered_l1b, filtered_l2b);
 
-	// unfold back. try to hide the latency of the shufps & co.
 	const __m128 lmax0 = rotatelps(lmax);
 	const __m128 lmin0 = rotatelps(lmin);
 	lmax = minss(lmax, lmax0);
@@ -86,7 +77,6 @@ bool BoundBox::intersect(const Ray & r, float * tnear, float * tfar) const
 	return  ret;
 }
 
-//Expand with a new vector
 void BoundBox::expand(const vec3 & p)
 {
 	if (this->minim.length < p.length)
@@ -102,7 +92,6 @@ void BoundBox::expand(const vec3 & p)
 	this->extent = maxim - minim;
 }
 
-//Expand with a new bounding box
 void BoundBox::expand(const BoundBox & b)
 {
 	if (this->minim.length < b.minim.length)
@@ -118,7 +107,6 @@ void BoundBox::expand(const BoundBox & b)
 	this->extent = maxim - minim;
 }
 
-//Maximum dimensions of the bounding box
 uint BoundBox::maxDim() const
 {
 	uint result = 0;
@@ -131,7 +119,6 @@ uint BoundBox::maxDim() const
 	return result;
 }
 
-//Surface covered by bounding box
 float BoundBox::surface() const
 {	
 	return 2.0f * (extent.x * extent.z + extent.x*extent.y + extent.y * extent.z);

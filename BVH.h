@@ -15,10 +15,9 @@ class BVH
 	uint32_t nNodes, nLeafs, leafSize;
 	std::vector<Object*>* build_prims;
 
-	//! Build the BVH tree out of build_prims
+
 	void build();
 
-	// Fast Traversal System
 	BVHFlatNode *flatTree;
 
 	public:
