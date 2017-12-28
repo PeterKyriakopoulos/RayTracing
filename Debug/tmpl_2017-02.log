@@ -1,21 +1,19 @@
 ﻿  BoundBox.cpp
 c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
   c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
-c:\users\pete\documents\github\raytracing\Object.h(16): error C3646: 'getBoundBox': unknown override specifier
-c:\users\pete\documents\github\raytracing\Object.h(16): error C2059: syntax error: ')'
-c:\users\pete\documents\github\raytracing\Object.h(16): error C2238: unexpected token(s) preceding ';'
-BoundBox.cpp(81): error C3867: 'Tmpl8::vec3::length': non-standard syntax; use '&' to create a pointer to member
-BoundBox.cpp(81): error C2296: '<': illegal, left operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
-BoundBox.cpp(81): error C2297: '<': illegal, right operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
-BoundBox.cpp(86): error C3867: 'Tmpl8::vec3::length': non-standard syntax; use '&' to create a pointer to member
-BoundBox.cpp(86): error C2296: '>': illegal, left operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
-BoundBox.cpp(86): error C2297: '>': illegal, right operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
-BoundBox.cpp(96): error C3867: 'Tmpl8::vec3::length': non-standard syntax; use '&' to create a pointer to member
-BoundBox.cpp(96): error C2296: '<': illegal, left operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
-BoundBox.cpp(96): error C2297: '<': illegal, right operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
-BoundBox.cpp(101): error C3867: 'Tmpl8::vec3::length': non-standard syntax; use '&' to create a pointer to member
-BoundBox.cpp(101): error C2296: '>': illegal, left operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
-BoundBox.cpp(101): error C2297: '>': illegal, right operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
+BoundBox.cpp(42): warning C4101: 'm128': unreferenced local variable
+BoundBox.cpp(82): error C3867: 'Tmpl8::vec3::length': non-standard syntax; use '&' to create a pointer to member
+BoundBox.cpp(82): error C2296: '<': illegal, left operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
+BoundBox.cpp(82): error C2297: '<': illegal, right operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
+BoundBox.cpp(87): error C3867: 'Tmpl8::vec3::length': non-standard syntax; use '&' to create a pointer to member
+BoundBox.cpp(87): error C2296: '>': illegal, left operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
+BoundBox.cpp(87): error C2297: '>': illegal, right operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
+BoundBox.cpp(97): error C3867: 'Tmpl8::vec3::length': non-standard syntax; use '&' to create a pointer to member
+BoundBox.cpp(97): error C2296: '<': illegal, left operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
+BoundBox.cpp(97): error C2297: '<': illegal, right operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
+BoundBox.cpp(102): error C3867: 'Tmpl8::vec3::length': non-standard syntax; use '&' to create a pointer to member
+BoundBox.cpp(102): error C2296: '>': illegal, left operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
+BoundBox.cpp(102): error C2297: '>': illegal, right operand has type 'float (__thiscall Tmpl8::vec3::* )(void) const'
   BVH.cpp
 c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
   c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
@@ -23,4 +21,38 @@ BVH.cpp(122): error C2280: 'BVHFlatNode::BVHFlatNode(void)': attempting to refer
   c:\users\pete\documents\github\raytracing\BVH.h(11): note: compiler has generated 'BVHFlatNode::BVHFlatNode' here
   c:\users\pete\documents\github\raytracing\BVH.h(11): note: 'BVHFlatNode::BVHFlatNode(void)': function was implicitly deleted because a data member 'BVHFlatNode::boundBox' has either no appropriate default constructor or overload resolution was ambiguous
   c:\users\pete\documents\github\raytracing\BVH.h(9): note: see declaration of 'BVHFlatNode::boundBox'
+  Camera.cpp
+c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
+  c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
+  game.cpp
+c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
+  c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
+  Material.cpp
+c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
+  c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
+  Plane.cpp
+c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
+  c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
+  PointLight.cpp
+c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
+  c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
+  Ray.cpp
+c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
+  c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
+  RayTrace.cpp
+c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
+  c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
+RayTrace.cpp(148): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Sphere.cpp
+c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
+  c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
+  surface.cpp
+c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
+  c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
+  template.cpp
+c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
+  c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
+  threads.cpp
+c:\users\pete\documents\github\raytracing\Object.h(8): warning C4099: 'Object': type name first seen using 'class' now seen using 'struct'
+  c:\users\pete\documents\github\raytracing\Object.h(8): note: see declaration of 'Object'
   Generating Code...

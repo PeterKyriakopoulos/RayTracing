@@ -44,7 +44,7 @@ bool BoundBox::intersect(const Ray & r, float * tnear, float * tfar) const
 		box_min = loadps(&minim),
 		box_max = loadps(&maxim),
 		pos = loadps(&r.orig),
-		// i changed it to r.dir and it stopped the error, but not sure if it actually works
+		// I changed the brackets to &r.dir which stopped the error, but not sure if it actually makes it work
 		inv_dir = loadps(&r.dir);
 
 	const __m128 l1 = mulps(subps(box_min, pos), inv_dir);
