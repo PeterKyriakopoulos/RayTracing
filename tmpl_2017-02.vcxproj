@@ -227,6 +227,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BoundBox.cpp" />
+    <ClCompile Include="BVH.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -244,8 +245,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoundBox.h" />
+    <ClInclude Include="BVH.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="IntersectionInfo.h" />
+    <ClInclude Include="Log.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Plane.h" />
@@ -254,6 +258,7 @@
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RayTrace.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="surface.h" />
     <ClInclude Include="template.h" />
     <ClInclude Include="threads.h" />

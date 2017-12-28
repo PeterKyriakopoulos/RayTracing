@@ -20,6 +20,7 @@
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="RayTrace.cpp" />
     <ClCompile Include="BoundBox.cpp" />
+    <ClCompile Include="BVH.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
@@ -42,6 +43,10 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RayTrace.h" />
     <ClInclude Include="BoundBox.h" />
+    <ClInclude Include="BVH.h" />
+    <ClInclude Include="IntersectionInfo.h" />
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="Stopwatch.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">
